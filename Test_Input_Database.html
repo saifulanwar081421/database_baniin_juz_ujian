@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Google Sheets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: #4a6fc3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .card {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card:last-child {
+            border-bottom: none;
+        }
+        
+        h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #4a6fc3;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2 i {
+            margin-right: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background: #4a6fc3;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #3b5aa6;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            min-height: 50px;
+        }
+        
+        .success {
+            color: #2ecc71;
+            font-weight: 500;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .sheet-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+        
+        .sheet-item {
+            padding: 10px;
+            background: #f0f4ff;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sheet-item i {
+            margin-right: 10px;
+            color: #4a6fc3;
+        }
+        
+        .status {
+            padding: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-table"></i> Aplikasi Google Sheets</h1>
+            <p class="description">Terhubung dengan Google Apps Script untuk membaca dan menulis data</p>
+        </header>
+        
+        <div class="card">
+            <h2><i class="fas fa-list"></i> Daftar Sheet yang Tersedia</h2>
+            <p>Mengambil daftar sheet dari spreadsheet Google:</p>
+            <button id="fetchSheets" onclick="fetchSheets()">
+                <i class="fas fa-download"></i> Ambil Daftar Sheet
+            </button>
+            <div class="result" id="sheetsResult">
+                Klik tombol di atas untuk mengambil daftar sheet
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-edit"></i> Tambah Data ke Sheet</h2>
+            <div class="form-group">
+                <label for="sheetSelect">Pilih Sheet:</label>
+                <select id="sheetSelect">
+                    <option value="">-- Pilih Sheet --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nameInput">Nama:</label>
+                <input type="text" id="nameInput" placeholder="Masukkan nama">
+            </div>
+            <div class="form-group">
+                <label for="emailInput">Email:</label>
+                <input type="email" id="emailInput" placeholder="Masukkan email">
+            </div>
+            <div class="form-group">
+                <label for="messageInput">Pesan:</label>
+                <input type="text" id="messageInput" placeholder="Masukkan pesan">
+            </div>
+            <button id="submitData" onclick="submitData()">
+                <i class="fas fa-paper-plane"></i> Kirim Data
+            </button>
+            <div class="result" id="submitResult">
+                Hasil pengiriman data akan ditampilkan di sini
+            </div>
+        </div>
+        
+        <div class="status" id="statusMessage"></div>
+    </div>
+    
+    <footer>
+        <p>Dibuat dengan ❤️ menggunakan Google Apps Script</p>
+    </footer>
+
+    <script>
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbz3_JWNhB_cMMbKao-jTI8GZe2eqHM_2rgJwfEtmJ8W7qntykRAc3QVYl4OdshnRUnrqw/exec';
+        
+        // Fungsi untuk mengambil daftar sheet
+        async function fetchSheets() {
+            const resultElement = document.getElementById('sheetsResult');
+            const button = document.getElementById('fetchSheets');
+            const statusElement = document.getElementById('statusMessage');
+            
+            // Update UI
+            button.innerHTML = '<span class="loading"></span> Memuat...';
+            button.disabled = true;
+            resultElement.innerHTML = 'Memuat data...';
+            statusElement.textContent = 'Meminta daftar sheet...';
+            statusElement.style.color = '#4a6fc3';
+            
+            try {
+                // Gunakan proxy untuk menghindari CORS (dalam development)
+                // Untuk production, pastikan Google Apps Script sudah di-deploy dengan izin CORS
+                const response = await fetch(`${scriptUrl}?action=getSheets`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.result === "success") {
+                    // Tampilkan daftar sheet
+                    let html = '<ul class="sheet-list">';
+                    data.sheets.forEach(sheet => {
+                        html += `<li class="sheet-item"><i class="fas fa-table"></i> ${sheet.name}</li>`;
+                    });
+                    html += '</ul>';
+                    resultElement.innerHTML = html;
+                    
+                    // Isi dropdown pilihan sheet
+                    const sheetSelect = document.getElementById('sheetSelect');
+                    sheetSelect.innerHTML = '<option value="">-- Pilih Sheet --</option>';
+                    data.sheets.forEach(sheet => {
+                        sheetSelect.innerHTML += `<option value="${sheet.name}">${sheet.name}</option>`;
+                    });
+                    
+                    statusElement.textContent = 'Berhasil mengambil daftar sheet!';
+                    statusElement.style.color = '#2ecc71';
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan saat mengambil data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultElement.innerHTML = `<p class="error">Gagal mengambil daftar sheet: ${error.message}</p>`;
+                statusElement.textContent = 'Gagal mengambil daftar sheet!';
+                statusElement.style.color = '#e74c3c';
+            } finally {
+                // Reset UI
+                button.innerHTML = '<i class="fas fa-download"></i> Ambil Daftar Sheet';
+                button.disabled = false;
+            }
+        }
+        
+        // Fungsi untuk mengirim data
+        async function submitData() {
+            const sheetSelect = document.getElementById('sheetSelect');
+            const nameInput = document.getElementById('nameInput');
+            const emailInput = document.getElementById('emailInput');
+            const messageInput = document.getElementById('messageInput');
+            const resultElement = document.getElementById('submitResult');
+            const button = document.getElementById('submitData');
+            const statusElement = document.getElementById('statusMessage');
+            
+            // Validasi input
+            if (!sheetSelect.value) {
+                resultElement.innerHTML = '<p class="error">Pilih sheet terlebih dahulu!</p>';
+                return;
+            }
+            
+            if (!nameInput.value || !emailInput.value) {
+                resultElement.innerHTML = '<p class="error">Nama dan email harus diisi!</p>';
+                return;
+            }
+            
+            // Update UI
+            button.innerHTML = '<span class="loading"></span> Mengirim...';
+            button.disabled = true;
+            resultElement.innerHTML = 'Mengirim data...';
+            statusElement.textContent = 'Mengirim data ke sheet...';
+            statusElement.style.color = '#4a6fc3';
+            
+            try {
+                // Data yang akan dikirim
+                const dataToSend = {
+                    sheetName: sheetSelect.value,
+                    data: [
+                        0, // Nomor urut akan diisi oleh server
+                        nameInput.value,
+                        emailInput.value,
+                        messageInput.value,
+                        new Date().toLocaleString('id-ID')
+                    ]
+                };
+                
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.result === "success") {
+                    resultElement.innerHTML = `
+                        <p class="success">Data berhasil dikirim!</p>
+                        <p>Sheet: ${data.sheet}</p>
+                        <p>Baris: ${data.row}</p>
+                    `;
+                    
+                    // Reset form
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    messageInput.value = '';
+                    
+                    statusElement.textContent = 'Data berhasil dikirim!';
+                    statusElement.style.color = '#2ecc71';
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan saat mengirim data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultElement.innerHTML = `<p class="error">Gagal mengirim data: ${error.message}</p>`;
+                statusElement.textContent = 'Gagal mengirim data!';
+                statusElement.style.color = '#e74c3c';
+            } finally {
+                // Reset UI
+                button.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data';
+                button.disabled = false;
+            }
+        }
+        
+        // Coba ambil daftar sheet secara otomatis saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchSheets();
+        });
+    </script>
+</body>
+</html>
