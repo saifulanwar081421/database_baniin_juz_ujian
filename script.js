@@ -78,7 +78,7 @@ async function simpanData() {
     
     // Tambahkan data untuk setiap juz (1 = terpilih, kosong = tidak terpilih)
     for (let i = 1; i <= 30; i++) {
-        rowData.push(selectedJuzValues.includes(i) ? 1 : "");
+        rowData.push(selectedJuzValues.includes(i) ? i : "");
     }
     
     const data = {
@@ -221,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadSheets();
 
 });
+
 
 
 
