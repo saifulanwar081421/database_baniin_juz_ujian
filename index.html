@@ -2,64 +2,39 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <style>
-    body {
-      margin: 0; font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      height: 100vh; display: flex; justify-content: center; align-items: center;
-    }
-    .login-box {
-      background: #fff; padding: 2rem; border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2); width: 320px; text-align: center;
-    }
-    input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
-    button {
-      width: 100%; padding: 12px; background: linear-gradient(135deg, #4facfe, #00f2fe);
-      border: none; border-radius: 8px; font-size: 16px; color: #fff; cursor: pointer;
-    }
-    button:hover { opacity: 0.9; }
-    .error { color: red; margin-top: 10px; }
-  </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button onclick="login()">Masuk</button>
-    <p id="error" class="error"></p>
-  </div>
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username"><br><br>
+  <input type="password" id="password" placeholder="Password"><br><br>
+  <button onclick="login()">Masuk</button>
+  <p id="error" style="color:red"></p>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxkTWhAUtnBbDTdH7ZtWphmg2YM4fAY4X-0JjZTwdDV_7SUUmbSIs2Xj6JsoANH2sgK/exec"; // ganti dengan URL Apps Script kamu
+    const API_URL = "https://script.google.com/macros/s/AKfycbz4WCgBw9h_XJGRfDDBeE73QX1HNU2-GOONa8KbqRgZkiCvb7f62myiL1QEqIyNZ29MDw/exec"; // ganti dengan URL Web App GAS
 
-    async function login() {
+    function login() {
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
-      const errorMsg = document.getElementById("error");
 
-      errorMsg.textContent = "";
+      const script = document.createElement("script");
+      const callbackName = "handleResponse_" + Date.now();
 
-      try {
-        let res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ username, password }),
-          headers: { "Content-Type": "application/json" }
-        });
-        let data = await res.json();
-
+      window[callbackName] = function(data) {
         if (data.success) {
-          // Simpan ke localStorage agar bisa dipakai di halaman lain
           localStorage.setItem("nama", data.nama);
-          window.location.href = "home.html"; // masuk ke halaman utama
+          window.location.href = "home.html";
         } else {
-          errorMsg.textContent = "Username atau Password salah!";
+          document.getElementById("error").textContent = "Username / Password salah!";
         }
-      } catch (err) {
-        errorMsg.textContent = "Gagal terhubung ke server!";
-      }
+        // bersihkan script tag
+        document.body.removeChild(script);
+        delete window[callbackName];
+      };
+
+      script.src = `${API_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&callback=${callbackName}`;
+      document.body.appendChild(script);
     }
   </script>
 </body>
