@@ -26,6 +26,21 @@
     }
     button:hover { opacity: 0.9; }
     .error { color: red; margin-top: 10px; }
+    
+    .spinner {
+      display: none;
+      margin: 15px auto;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4facfe;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 
 
@@ -35,9 +50,10 @@
 <body>
   <div class="login-box">
     <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button onclick="login()">Masuk</button>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()" id="btnLogin">Masuk</button>
+    <div class="spinner" id="loading"></div>
     <p id="error" class="error"></p>
   </div>
 
@@ -46,24 +62,30 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbz4WCgBw9h_XJGRfDDBeE73QX1HNU2-GOONa8KbqRgZkiCvb7f62myiL1QEqIyNZ29MDw/exec"; // ganti dengan URL Web App GAS
-
     function login() {
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
+      const errorMsg = document.getElementById("error");
+      const loading = document.getElementById("loading");
+      const btnLogin = document.getElementById("btnLogin");
+
+      errorMsg.textContent = "";
+      loading.style.display = "block";
+      btnLogin.disabled = true;
 
       const script = document.createElement("script");
       const callbackName = "handleResponse_" + Date.now();
 
       window[callbackName] = function(data) {
+        loading.style.display = "none";
+        btnLogin.disabled = false;
+
         if (data.success) {
           localStorage.setItem("nama", data.nama);
           window.location.href = "home.html";
         } else {
-          document.getElementById("error").textContent = "Username / Password salah!";
+          errorMsg.textContent = "Username / Password salah!";
         }
-        catch (err) {
-        errorMsg.textContent = "Gagal terhubung ke server!";}
-
 
         // bersihkan script tag
         document.body.removeChild(script);
