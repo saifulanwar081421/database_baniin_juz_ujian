@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halaman Utama</title>
+</head>
+<body>
+  <h1>Selamat datang, <span id="nama"></span>!</h1>
+  <button onclick="logout()">Logout</button>
+  <p> Input Nama Santri dan Juz: 
+    <a href="Input Juz dan Nama Santri.html" target="_blank">Input Juz</a>
+  </p>  
+  <ul>
+    <a href="Test_Input_Database.html" target="_blank">Cek Sheet</a>
+  </ul>
+  <script>
+    document.getElementById("nama").textContent = localStorage.getItem("nama") || "User";
+    function logout() {
+      localStorage.clear();
+      window.location.href = "index.html"; // balik ke login
+    }
+  </script>
+</body>
+</html>
