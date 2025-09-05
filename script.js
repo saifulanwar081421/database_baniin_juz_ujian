@@ -1,6 +1,6 @@
 
 // URL Web App - GANTI_DENGAN_URL_DEPLOYMENT_ANDA
-const scriptURL = "https://script.google.com/macros/s/AKfycbyBFJUetjOvZ4ta6Cmz5lr9Tt9OhcBxnbZt6TfGsQ8_EL3PBNkUutb0n71oFBOcrACmFw/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbzlr1_zf6Cqx5_VQdIwAm3FDOYKPRymx6rM93Tg59dApFskMNoBTqXqD7Fl3Vyp9uTLqA/exec";
 
 // Variabel global
 let selectedJuz = [];
@@ -221,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadSheets();
 
 });
+
 
 
 
