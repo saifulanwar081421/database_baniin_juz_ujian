@@ -3,116 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Halaman Login</title>
+  <title>Login</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", sans-serif;
+      margin: 0; font-family: "Segoe UI", sans-serif;
       background: linear-gradient(135deg, #4facfe, #00f2fe);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      height: 100vh; display: flex; justify-content: center; align-items: center;
     }
-
     .login-box {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      width: 320px;
-      text-align: center;
+      background: #fff; padding: 2rem; border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2); width: 320px; text-align: center;
     }
-
-    .login-box h2 {
-      margin-bottom: 1.5rem;
-      color: #333;
+    input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; }
+    button {
+      width: 100%; padding: 12px; background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border: none; border-radius: 8px; font-size: 16px; color: #fff; cursor: pointer;
     }
-
-    .input-group {
-      margin-bottom: 1rem;
-      text-align: left;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 6px;
-      color: #555;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      outline: none;
-      font-size: 14px;
-      transition: 0.3s;
-    }
-
-    .input-group input:focus {
-      border-color: #4facfe;
-      box-shadow: 0 0 6px rgba(79,172,254,0.6);
-    }
-
-    .btn-login {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .btn-login:hover {
-      opacity: 0.9;
-      transform: scale(1.02);
-    }
-
-    .extra {
-      margin-top: 1rem;
-      font-size: 14px;
-    }
-
-    .extra a {
-      color: #4facfe;
-      text-decoration: none;
-    }
-
-    .extra a:hover {
-      text-decoration: underline;
-    }
+    button:hover { opacity: 0.9; }
+    .error { color: red; margin-top: 10px; }
   </style>
 </head>
 <body>
   <div class="login-box">
     <h2>Login</h2>
-    <form>
-      <div class="input-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Masukkan username" required>
-      </div>
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Masukkan password" required>
-      </div>
-      <button type="submit" class="btn-login">Masuk</button>
-      <div class="extra">
-        <p>Belum punya akun? <a href="#">Daftar</a></p>
-      </div>
-    </form>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Masuk</button>
+    <p id="error" class="error"></p>
   </div>
-  <p>
-    Klik tautan di bawah ini untuk membuka halaman "Tentang Kami" di tab baru:
-    <a href="Input Juz dan Nama Santri.html" target="_blank">Input Juz</a>
-  </p>
-  <ul>  
-    <a href="Test_Input_Database.html" target="_blank">Cek Sheet</a>
-  </ul>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyZREcLuBvE11sfDRveNiNo77hYg2vw2hxD55LYD__5z_kG0hQcs0WuKyAeJm6VWCfryQ/exec"; // ganti dengan URL Apps Script kamu
+
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const errorMsg = document.getElementById("error");
+
+      errorMsg.textContent = "";
+
+      try {
+        let res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ username, password }),
+          headers: { "Content-Type": "application/json" }
+        });
+        let data = await res.json();
+
+        if (data.success) {
+          // Simpan ke localStorage agar bisa dipakai di halaman lain
+          localStorage.setItem("nama", data.nama);
+          window.location.href = "home.html"; // masuk ke halaman utama
+        } else {
+          errorMsg.textContent = "Username atau Password salah!";
+        }
+      } catch (err) {
+        errorMsg.textContent = "Gagal terhubung ke server!";
+      }
+    }
+  </script>
 </body>
 </html>
