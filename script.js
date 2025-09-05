@@ -1,6 +1,6 @@
 
 // URL Web App - GANTI_DENGAN_URL_DEPLOYMENT_ANDA
-const scriptURL = "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzRqVip322U_0JPYVZKF5sfzW5WJKgUraetw8o5thfgcDvnOSFBOp8GMaKrJIWFeuq85w/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbzRqVip322U_0JPYVZKF5sfzW5WJKgUraetw8o5thfgcDvnOSFBOp8GMaKrJIWFeuq85w/exec";
 
 // Variabel global
 let selectedJuz = [];
@@ -221,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadSheets();
 
 });
+
 
 
 
